@@ -17,6 +17,8 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
 public class Student extends User {
 
+    private ERole role = ERole.STUDENT;
+
     public Student(User user) {
         super(user.getEmail(), user.getNames(), user.getTelephone(), user.getGender(), user.getPassword());
     }

@@ -85,8 +85,8 @@ public class UserController {
 
         User user = new User();
         String encodedPassword = bCryptPasswordEncoder.encode(dto.getPassword());
-        Role role = roleRepository.findByName(dto.getRole()).orElseThrow(
-                () -> new BadRequestException("User Role not set"));
+        System.out.println(dto.getRole());
+        Role role = this.roleRepository.findByName(dto.getRole());
 
         user.setEmail(dto.getEmail());
         user.setNames(dto.getNames());
@@ -95,11 +95,11 @@ public class UserController {
         user.setPassword(encodedPassword);
         user.setRoles(Collections.singleton(role));
 
-        if (dto.getRole().equals("TEACHER")) {
+        if (dto.getRole().equals(ERole.TEACHER)) {
             Teacher teacher = new Teacher(user);
             Teacher entity = this.teacherService.createTeacher(teacher);
             return ResponseEntity.ok(new ApiResponse(true, entity));
-        } else if (dto.getRole().equals("STUDENT")) {
+        } else if (dto.getRole().equals(ERole.STUDENT)) {
             Student student = new Student(user);
             Student entity = this.studentService.saveStudent(student);
             return ResponseEntity.ok(new ApiResponse(true, entity));
@@ -113,8 +113,7 @@ public class UserController {
         List<Student> students = dto.getStudentsDTO().stream().map(student -> {
             User user = this.convertDTO(student);
             String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
-            Role role = roleRepository.findByName(ERole.STUDENT).orElseThrow(
-                    () -> new BadRequestException("User Role not set"));
+            Role role = roleRepository.findByName(ERole.STUDENT);
 
             user.setPassword(encodedPassword);
             user.setRoles(Collections.singleton(role));

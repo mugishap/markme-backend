@@ -31,10 +31,11 @@ public class MarkMeApplication {
         Set<ERole> roles = new HashSet<>();
         roles.add(ERole.ADMIN);
         roles.add(ERole.NORMAL);
+        roles.add(ERole.STUDENT);
 
         for (ERole role : roles) {
-            Optional<Role> roleByName = roleRepository.findByName(role);
-            if (!roleByName.isPresent()) {
+            Role roleByName = roleRepository.findByName(role);
+            if (roleByName == null) {
                 Role newRole = new Role(role, role.toString());
                 roleRepository.save(newRole);
                 System.out.println("Created: " + role.toString());
