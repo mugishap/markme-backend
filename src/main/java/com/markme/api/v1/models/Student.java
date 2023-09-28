@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "students")
 @Inheritance(strategy = InheritanceType.JOINED)
-@AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
 public class Student extends User {
 

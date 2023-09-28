@@ -1,6 +1,8 @@
 package com.markme.api.v1.controllers;
 
+import com.markme.api.v1.dtos.MultipleStudentsDTO;
 import com.markme.api.v1.dtos.SignUpDTO;
+import com.markme.api.v1.enums.ERole;
 import com.markme.api.v1.exceptions.BadRequestException;
 import com.markme.api.v1.fileHandling.File;
 import com.markme.api.v1.fileHandling.FileStorageService;
@@ -35,6 +37,7 @@ import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
@@ -73,8 +76,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<User> getById(@PathVariable(value = "id") UUID id) {
-        return ResponseEntity.ok(this.userService.getById(id));
+    public ResponseEntity<ApiResponse> getById(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity.ok(new ApiResponse(true, "User fetched successfully", this.userService.getById(id)));
     }
 
     @PostMapping(path = "/register")
@@ -102,6 +105,33 @@ public class UserController {
             return ResponseEntity.ok(new ApiResponse(true, entity));
         } else {
             return ResponseEntity.ok(new ApiResponse(false, "User Role not set"));
+        }
+    }
+
+    @PostMapping("/register-multiple-students")
+    public ResponseEntity<ApiResponse> registerMultipleStudents(@RequestBody MultipleStudentsDTO dto) {
+        List<Student> students = dto.getStudentsDTO().stream().map(student -> {
+            User user = this.convertDTO(student);
+            String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            Role role = roleRepository.findByName(ERole.STUDENT).orElseThrow(
+                    () -> new BadRequestException("User Role not set"));
+
+            user.setPassword(encodedPassword);
+            user.setRoles(Collections.singleton(role));
+
+            return new Student(user);
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(new ApiResponse(true, "Students created successfully", students));
+    }
+
+    @GetMapping(path = "/user/role/{role}")
+    public ResponseEntity<ApiResponse> getByRole(@PathVariable(value = "role") String role) {
+        if (role.equals("TEACHER")) {
+            return ResponseEntity.ok().body(new ApiResponse(true, "Fetched successfully", this.teacherService.getAllTeachers()));
+        } else if (role.equals("STUDENT")) {
+            return ResponseEntity.ok().body(new ApiResponse(true, "Fetched successfully", this.studentService.getAllStudents()));
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 

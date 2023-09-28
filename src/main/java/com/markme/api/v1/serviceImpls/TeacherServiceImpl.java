@@ -22,27 +22,6 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Override
-    public Teacher getTeacherById(UUID id) {
-        return this.teacherRepository.getById(id);
-    }
-
-    @Override
-    public Teacher updateTeacher(UUID id, UpdateUserDTO dto) {
-        Teacher teacher = this.teacherRepository.getById(id);
-        teacher.setNames(dto.getNames());
-        teacher.setEmail(dto.getEmail());
-        teacher.setGender(dto.getGender());
-        teacher.setTelephone(dto.getTelephone());
-        return this.teacherRepository.save(teacher);
-    }
-
-    @Override
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteTeacher(UUID id) {
-        this.teacherRepository.deleteById(id);
-    }
-
-    @Override
     public List<Teacher> getAllTeachers() {
         return this.teacherRepository.findAll();
     }

@@ -1,34 +1,34 @@
 package com.markme.api.v1.serviceImpls;
 
 import com.markme.api.v1.models.Student;
+import com.markme.api.v1.repositories.IStudentRepository;
 import com.markme.api.v1.services.IStudentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements IStudentService {
+
+    private final IStudentRepository studentRepository;
+
     @Override
     public Student saveStudent(Student student) {
-        return null;
+        return this.studentRepository.save(student);
     }
 
-    @Override
-    public Student updateStudent(UUID id, Student student) {
-        return null;
-    }
-
-    @Override
-    public Student getStudentById(UUID id) {
-        return null;
-    }
 
     @Override
     public List<Student> getAllStudents() {
-        return null;
+        return this.studentRepository.findAll();
     }
 
     @Override
-    public void deleteStudentById(UUID id) {
-
+    public List<Student> createMultipleStudents(List<Student> students) {
+        return this.studentRepository.saveAll(students);
     }
+
 }

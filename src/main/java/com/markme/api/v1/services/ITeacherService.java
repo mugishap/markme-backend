@@ -10,12 +10,6 @@ public interface ITeacherService {
 
     Teacher createTeacher(Teacher teacher);
 
-    Teacher getTeacherById(UUID id);
-
-    Teacher updateTeacher(UUID id, UpdateUserDTO dto);
-
-    void deleteTeacher(UUID id);
-
     List<Teacher> getAllTeachers();
 
 }
